@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Weather data</title>
+</head>
+<body>
+    <header>
+        <h1>My Website</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Header link one</a></li>
+                <li><a href="page2.html">Header link two</a></li>
+                <li><a href="page3.html">Header link three</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="weather">
+            <div id="weatherConst"></div>
+            <div id="search">
+                <h2>Check a different location:</h2>
+                    <form id="searchform" onsubmit="return findWeather();">
+                        <input type="text" name="name", id="placename" placeholder="Enter name of Location">
+                        <input type="text" name="location" id="lati" placeholder="Enter latitude">
+                        <input type="text" name="location" id="long" placeholder="Enter longitude">
+                        <button type="submit">Add</button>
+                    </form>
+            </div>
+            <div id="searched">Enter a city in the input field above!</div>
+        </div>
+    </main>
+    <footer>Copyright &copy;</footer>
+</body>
+<script>
+    const locations = [
+        {name: "Oslo", lat: 59.91, lon: 10.75},
+        {name: "London", lat: 51.51, lon: -0.13},
+        {name: "New York", lat: 40.71, lon: -74.01},
+        {name: "Tokyo", lat: 35.68, lon: 139.76},
+        {name: "Sydney", lat: -33.87, lon: 151.21},
+        {name: "Cape Town", lat: -33.92, lon: 18.42}
+    ]
+
+        function loadWeather() {
+        var weatherConst = document.querySelector("#weatherConst");
+
+        weatherConst.innerHTML = '';
+        locations.forEach(location => {
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current_weather=true`)
+                .then(response => response.json())
+                .then(data => {
+                    var div = document.createElement("div");
+                    div.innerHTML = `
+                    <h2>${location.name}</h2>
+                    <p>Temperature: ${data.current_weather.temperature}&degC</p>                    
+                    `;
+                    weatherConst.appendChild(div);
+                });
+        });
+    }; 
+
+    function findWeather() {
+        var place = document.getElementById("placename").value;
+        var lat = document.getElementById("lati").value;
+        var lon = document.getElementById("long").value;
+        var searched = document.getElementById("searched");
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+            .then(response => response.json())
+            .then(data => {
+                searched.innerHTML = `
+                <h2>${place}</h2>
+                <p>Temperature: ${data.current_weather.temperature}&degC</p>
+                `;
+            });
+        return false; //prevent refresh
+    };
+
+    loadWeather();
+    setInterval(loadWeather, 60000); //refresh every minute
+</script>
+</html>
