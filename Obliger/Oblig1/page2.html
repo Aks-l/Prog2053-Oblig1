@@ -25,25 +25,22 @@
 
 window.onload = function() {
     var content = document.getElementById("content");
-
-    // Fetch initial data and create rows
     fetchNew(5);
 
-    // When reaching the end of the page, add another row to .content
     window.onscroll = function(ev) {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-            fetchNew(1); // Fetch and add one row each time
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) { // if bottom of page:
+            fetchNew(1); 
         }
     };
 };
 
-// Function to fetch data and create rows
+//fetches numRowns new rows of data
 function fetchNew(numRows) {
     fetch('https://jsonplaceholder.typicode.com/todos/')
         .then(response => response.json())
         .then(data => {
             var content = document.getElementById("content");
-            var currentIndex = content.getElementsByClassName('row').length * 3; // Track current index for filling content
+            var currentIndex = content.getElementsByClassName('row').length * 3; //initiate with the number of rows 
 
             for (var i = 0; i < numRows; i++) {
                 var row = document.createElement("div");
